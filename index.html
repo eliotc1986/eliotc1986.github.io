@@ -55,7 +55,7 @@
 	<div class="site-wrapper">
 	  <div class="alert">
 	    <h1 class="title">Timeout Function</h1>
-	    <p class="description">The popup will appear after <span id="seconds">5</span> seconds of Inactivity</p>
+	    <p class="description">The popup will appear after <span id="seconds">3</span> seconds of Inactivity</p>
 	  </div>
 
 	  <div id="popup_overlay">
@@ -65,80 +65,73 @@
 	</div>
 <script>
 	(function($) {
-		var popUpMessage;
-
-		var currentConfig = {
+		
+	var timeoutPopupModule = {
+		currentConfig: {
 			activityEvents: 'mousemove mousewheel mousedown keypress touchmove touchend',
 			idleTimer: 3000,
-		};
-
-		activityDetector = function () {	        
-	     	// Mouse movement PC/Taps Android/Nexus(Chrome)
-	     	this.addEventListener("mousemove", resetTimer, false);
-		    // Scrolls PC
-		    this.addEventListener("mousewheel", resetTimer, false);
-		    // Clicks PC/Taps Android/Nexus(Chrome)
-		    this.addEventListener("mousedown", resetTimer, false);
-		    // Key strokes PC
-		    this.addEventListener("keypress", resetTimer, false);
-		    // Swipes iOS/Android
-		    this.addEventListener("touchmove", resetTimer, false);
-		    // Taps for iOS/Nexus/Android
-		    this.addEventListener("touchend", resetTimer, false);
-
-		    startTimer();
-	    };
-
-	    activityDetector();
-
-	    // startTimer
-	    function startTimer() {
-	    	if(isPopupOpen() !== true) {
-				console.log("timer started");
-				popUpMessage = window.setTimeout(openPopUp, currentConfig.idleTimer);
-	    	}
-		}
-
-		// reset timeout
-		function resetTimer() {
-			if(isPopupOpen() !== true) {
-				console.log("timer reset");
-				window.clearTimeout(popUpMessage);
-				startTimer();
-				changeBackground();
+		},
+		init: function() {
+			this.timeoutID = undefined;
+			this.cacheDom();
+			this.bindEvents();
+			this.startTimer();
+			console.log("initialized");
+		},
+		cacheDom: function() {
+			this.$body 					= $('body');
+			this.$popupOverlay 	= $('#popup_overlay');
+			this.$testButton 		= $('#test_button');
+			this.$closeButton 	= $('#close_button');
+		},
+		bindEvents: function() {
+			this.$closeButton.on('click', this.closePopUp.bind(this));
+			window.addEventListener("mousemove", this.resetTimer.bind(this), false);
+			window.addEventListener("mousewheel", this.resetTimer.bind(this), false);
+			window.addEventListener("mousedown", this.resetTimer.bind(this), false);
+			window.addEventListener("keypress", this.resetTimer.bind(this), false);
+			window.addEventListener("touchmove", this.resetTimer.bind(this), false);
+			window.addEventListener("touchend", this.resetTimer.bind(this), false);
+		},
+		closePopUp: function() {
+		  console.log("close popup function called");
+		  this.$popupOverlay.css('display', 'none');
+		},
+		openPopUp: function() {
+			console.log("3 seconds is up!");
+			$("#popup_overlay").css('display', 'block'); // refactor this
+		},
+		isPopupOpen: function() {
+			var popupOpen = this.$popupOverlay.is(':visible');
+			if(popupOpen === true) {
+				return true;
 			}
-		}
-
-		// Check to see if popUp is open
-		function isPopupOpen() {
-	      var popupOpen = $("#popup_overlay").is(":visible");
-
-	      if (popupOpen === true) {
-	        return true;
-	      }
-	      return false;
-	    };
-
-	    // Open Pop-up
-	    function openPopUp() {
-		  $("#popup_overlay").css("display", "block");
-		}
-
-		$("#close_button").on("click", function() {
-		  $("#popup_overlay").css("display", "none");
-		});
-
-		function printAlert(msg) {
-			var $notice = $("#notice");
-			$notice.html(msg);
-		}
-
-		function changeBackground() {
+			return false;
+		},
+		resetTimer: function() {
+			if(this.isPopupOpen() !== true) {
+				console.log("timer is reset");
+				window.clearTimeout(this.timeoutID);
+				this.startTimer();
+				this.changeBackground();
+			}
+		},
+		startTimer: function() {
+			if(this.isPopupOpen() !== true) {
+				console.log("timer started");
+				this.timeoutID = window.setTimeout(this.openPopUp, this.currentConfig.idleTimer);
+			}
+		},
+		changeBackground: function() {
 			$("body").css("background-color", "#CD5C5C");
 			setTimeout(function(){ 
 				$("body").css("background-color", "#90EE90");
 			}, 400);
 		}
+	};
+
+	timeoutPopupModule.init();
+
 	}(jQuery));
 </script>
 </body>
