@@ -77,18 +77,22 @@
 		var popUpMessage;
 
 		var currentConfig = {
-			activityEvents: 'click keypress scroll wheel mousewheel mousemove',
+			activityEvents: 'mousemove mousedown keypress mousewheel touchmove touchend',
 			idleTimer: 3000,
 		};
 
-		activityDetector = function () {
-	        this.addEventListener("mousemove", resetTimer, false);
-		    this.addEventListener("mousedown", resetTimer, false);
-		    this.addEventListener("keypress", resetTimer, false);
-		    this.addEventListener("DOMMouseScroll", resetTimer, false);
+		activityDetector = function () {	        
+	     	// Mouse movement PC/Taps Android/Nexus(Chrome)
+	     	this.addEventListener("mousemove", resetTimer, false);
+		    // Scrolls PC
 		    this.addEventListener("mousewheel", resetTimer, false);
+		    // Clicks PC/Taps Android/Nexus(Chrome)
+		    this.addEventListener("mousedown", resetTimer, false);
+		    // Key strokes PC
+		    this.addEventListener("keypress", resetTimer, false);
+		    // Swipes iOS/Android
 		    this.addEventListener("touchmove", resetTimer, false);
-		    this.addEventListener("MSPointerMove", resetTimer, false);
+		    // Taps for iOS/Nexus/Android
 		    this.addEventListener("touchend", resetTimer, false);
 
 		    startTimer();
