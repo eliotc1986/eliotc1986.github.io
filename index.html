@@ -1,58 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>JS - Idle Popup Demo</title>
+  <meta name="keywords" content="JavaScript,JS,CSS,HTML5,JS Test,Testing,GitHub,Git" />
+  <meta name="description" content="Simple JS function that displays a popup after 3 seconds of inactivity." />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- ogp -->
+  <meta property="og:title" content="JS - Idle Popup Demo" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://eliotc1986.github.io/" />
+  <meta property="og:image" content="http://eliotc1986.github.io/vsbias-logo-1200x630.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:description" content="Simple JS function that displays a popup after 3 seconds of inactivity." />
+  <!-- //ogp -->
+
 	<link rel="stylesheet" href="https://necolas.github.io/normalize.css/3.0.2/normalize.css">
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<title>Test JS</title>
-	<style>
-		#popup_overlay {
-		  background-color: #fff;
-		  border-radius: 5px;
-		  box-sizing: border-box;
-		  -webkit-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
-		  -moz-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
-		  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
-		  display: none;
-		  ;
-		  height: 300px;
-		  margin-right: -150px;
-		  padding: 25px;
-		  position: absolute;
-		  right: 50%;
-		  text-align: center;
-		  width: 300px;
-		}
-		#close_button {
-		  border-radius: 150px;
-		  cursor: pointer;		  
-		  position: absolute;
-		  right: 10px;
-		  top: 10px;
-		}
-		.popup_title {
-		  font-size: 30px;
-		  font-weight: bold;
-		}
-		.site-wrapper {
-		  text-align: center;
-		}
-		.site-wrapper .title {
-		  margin: 0;
-		}
-		.site-wrapper .description {
-		  margin: 0;
-		}
-		.site-wrapper .alert {
-		  background-color: #6495ED;
-		  border: 1px dotted #000;
-		  margin-bottom: 40px;
-		  padding: 20px;
-		}
-	</style>
+	<link rel="stylesheet" href="app.css">
 </head>
 <body>
+
 	<div class="site-wrapper">
 	  <div class="alert">
 	    <h1 class="title">Timeout Function</h1>
@@ -64,121 +36,8 @@
 	      <p class="popup_title">This is the popup</p>
 	  </div>
 	</div>
-<script>
-	(function($) {
-		var timeoutPopupModule = {
-			currentConfig: {
-				activityEvents: 'mousemove mousewheel mousedown keypress touchmove touchend',
-				idleTimer: 3000,
-			},
-			init: function() {
-				this.timeoutID = undefined;
-				this.cacheDom();
-				this.bindEvents();
-				this.startTimer();
-				console.log("initialized");
-			},
-			cacheDom: function() {
-				this.$body 					= $('body');
-				this.$popupOverlay 	= $('#popup_overlay');
-				this.$testButton 		= $('#test_button');
-				this.$closeButton 	= $('#close_button');
-			},
-			bindEvents: function() {
-				this.$closeButton.on('click', this.closePopUp.bind(this));
-				window.addEventListener("mousemove", this.resetTimer.bind(this), false);
-				window.addEventListener("mousewheel", this.resetTimer.bind(this), false);
-				window.addEventListener("mousedown", this.resetTimer.bind(this), false);
-				window.addEventListener("keypress", this.resetTimer.bind(this), false);
-				window.addEventListener("touchmove", this.resetTimer.bind(this), false);
-				window.addEventListener("touchend", this.resetTimer.bind(this), false);
-			},
-			closePopUp: function() {
-			  console.log("close popup function called");
-			  this.$popupOverlay.css('display', 'none');
-			},
-			openPopUp: function() {
-				console.log("3 seconds is up!");
-				$("#popup_overlay").css('display', 'block'); // refactor this
-			},
-			isPopupOpen: function() {
-				var popupOpen = this.$popupOverlay.is(':visible');
-				if(popupOpen === true) {
-					return true;
-				}
-				return false;
-			},
-			resetTimer: function() {
-				if(this.isPopupOpen() !== true) {
-					console.log("timer is reset");
-					window.clearTimeout(this.timeoutID);
-					this.startTimer();
-					this.changeBackground();
-				}
-			},
-			startTimer: function() {
-				if(this.isPopupOpen() !== true) {
-					console.log("timer started");
-					this.timeoutID = window.setTimeout(this.openPopUp, this.currentConfig.idleTimer);
-				}
-			},
-			changeBackground: function() {
-				$("body").css("background-color", "#CD5C5C");
-				setTimeout(function(){ 
-					$("body").css("background-color", "#90EE90");
-				}, 400);
-			}
-		};
 
-		timeoutPopupModule.init();
-
-	}(jQuery));
-	
-	// (function($) {
-
-	// 	function idlePopUp() {
-	// 		var config = {
-	// 			activityEvents: 'mousemove mousewheel mousedown keypress touchmove touchend',
-	// 			idleTimer: 3000,
-	// 			timeoutID: null
-	// 		}
-
-	// 		$(window).bind(config.activityEvents, function() {
-	// 			console.log("event firing");
-	// 			clearTimeout(config.timeoutID);
-
-	// 			config.timeoutID = setTimeout(function() {
-	// 				openPopUp();
-	// 				$(window).unbind(config.activityEvents);
-	// 			}, config.idleTimer);
-	// 		});
-	// 	}
-
-	// 	idlePopUp();
-
-	// 	//HELPER FUNCTIONS //
-
-	// 	// Check to see if popUp is open
-	// 	function isPopupOpen() {
- //      var popupOpen = $("#popup_overlay").is(":visible");
- //      if (popupOpen === true) {
- //        return true;
- //      }
- //      return false;
- //    };
-
-	//   // Open Pop-up
-	//   function openPopUp() {
-	// 	  $("#popup_overlay").css("display", "block");
-	// 	}
-
-	// 	// Close Pop-up
-	// 	$("#close_button").on("click", function() {
-	// 	  $("#popup_overlay").css("display", "none");
-	// 		idlePopUp();
-	// 	});
-
-	// }(jQuery));
-</script>
+	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+	<script src="app.js"></script>
 </body>
 </html>
